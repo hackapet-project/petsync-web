@@ -1,0 +1,16 @@
+Django~=4.2 # Or your preferred Django version
+gunicorn~=21.2
+psycopg2-binary~=2.9 # For PostgreSQL
+python-dotenv~=1.0 # For .env file handling
+dj-database-url~=2.1 # For parsing DATABASE_URL
+
+# Development Dependencies
+black~=23.12.1 # Code formatter
+isort~=5.13.2 # Import sorter
+flake8~=7.0.0 # Linter
+pre-commit~=3.6.0 # Pre-commit hooks
+django-extensions~=3.2.3 # Django development utilities
+djangorestframework~=3.14.0 # Django REST Framework
+drf-spectacular~=0.27.0 # OpenAPI/Swagger generation
+django-cors-headers~=4.3.1 # CORS handling
+

@@ -1,0 +1,47 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "username": "demo_admin",
+      "first_name": "Demo",
+      "last_name": "Admin",
+      "email": "demo.admin@refupet.local",
+      "is_staff": true,
+      "is_active": true,
+      "is_superuser": true,
+      "date_joined": "2024-01-01T12:00:00Z",
+      "password": "!unusable_password_hash_for_security"
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+      "username": "demo_staff",
+      "first_name": "Demo",
+      "last_name": "Staff",
+      "email": "demo.staff@refupet.local",
+      "is_staff": true,
+      "is_active": true,
+      "is_superuser": false,
+      "date_joined": "2024-01-01T12:00:00Z",
+      "password": "!unusable_password_hash_for_security"
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+      "username": "demo_volunteer",
+      "first_name": "Demo",
+      "last_name": "Volunteer",
+      "email": "demo.volunteer@refupet.local",
+      "is_staff": false,
+      "is_active": true,
+      "is_superuser": false,
+      "date_joined": "2024-01-01T12:00:00Z",
+      "password": "!unusable_password_hash_for_security"
+    }
+  }
+]
