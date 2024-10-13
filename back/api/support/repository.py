@@ -5,7 +5,7 @@ class Repository():
             'age': 10,
             'breed': 'half breed',
             'passport': True,
-            'chip': True,
+            'chip': True
         }
     ]}
 

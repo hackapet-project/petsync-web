@@ -1,8 +1,6 @@
 from django.urls import path #type: ignore
-
-from . import views
+from .views.animal_view import Animal
 
 urlpatterns = [
-    # path('', views.index, name='index'),
-    path('animals/', views.animals, name='animals'),
+    path('animals', Animal.as_view(), name='animals'),
 ]
