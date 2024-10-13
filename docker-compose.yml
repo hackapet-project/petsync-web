@@ -1,0 +1,70 @@
+services:
+  front:
+    ports:
+      - 5173:5173
+    build:
+      context: ./front
+      target: base
+    volumes:
+      - front_modules:/opt/workdir/node_modules
+      - type: bind
+        source: ./front
+        target: /opt/workdir
+  back:
+    ports:
+      - 8000:8000
+    build:
+      context: ./back
+      target: base
+    depends_on:
+      - postgres
+    volumes:
+      # - front_modules:/opt/workdir/node_modules
+      - type: bind
+        source: ./back
+        target: /opt/workdir
+    environment:
+      - DB_NAME=mydatabase
+      - DB_USER=myuser
+      - DB_PASSWORD=mypassword
+      - DB_HOST=postgres
+
+  postgres:
+    image: postgres:16.3-bookworm
+    tty: true
+    stdin_open: true
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+
+  django_scaffolder:
+    build:
+      context: .
+      dockerfile: Dockerfile.django
+    volumes:
+      - type: bind
+        source: .
+        target: /opt/workdir
+
+  adminer:
+    image: adminer
+    ports:
+      - 10000:8080
+
+  vite_scaffolder:
+    build:
+      context: .
+      dockerfile: Dockerfile.vite
+    volumes:
+      - type: bind
+        source: .
+        target: /opt/workdir
+
+volumes:
+  front_modules:
+  postgres_data:
