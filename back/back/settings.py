@@ -21,16 +21,37 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-(ux=y@ebwz0u27cclyc%qmnyf%93xbyf8(f%(e=!574n3c&(b+'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+# DELTE LOCALHOST AND TURN CSRF TRUE ON PRODUCTION !!!!
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = False
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
+ALLOWED_HOSTS = [
+    'localhost',
+]
 
-ALLOWED_HOSTS = []
+ALLOWED_METHODS = [
+    'GET',
+    'POST'
+]
 
+CORS_ALLOW_HEADERS = (
+    "accept",
+    "credentials",
+    "authorization",
+    "content-type",
+    "Access-Control-Allow-Credentials",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+)
 
+CORS_ALLOW_CREDENTIALS = True
 # Application definition
 
 INSTALLED_APPS = [
+    'api.apps.ApiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

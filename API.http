@@ -1,0 +1,11 @@
+###
+POST http://localhost:8000/v1/animals
+Content-Type: application/json
+
+{
+  "name": "Bruno",
+  "age": 12,
+  "breed": "Pitbull",
+  "passport": false,
+  "chip": true
+}
