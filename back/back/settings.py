@@ -51,6 +51,7 @@ CORS_ALLOW_CREDENTIALS = True
 # Application definition
 
 INSTALLED_APPS = [
+    'drf_yasg',
     'api.apps.ApiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
