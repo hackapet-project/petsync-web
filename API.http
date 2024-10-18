@@ -9,3 +9,7 @@ Content-Type: application/json
   "passport": false,
   "chip": true
 }
+
+###
+DELETE http://localhost:8000/v1/animals/1
+Content-Type: application/json

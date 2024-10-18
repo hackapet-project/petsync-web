@@ -33,7 +33,9 @@ ALLOWED_HOSTS = [
 
 ALLOWED_METHODS = [
     'GET',
-    'POST'
+    'POST',
+    'PUT',
+    'DELETE'
 ]
 
 CORS_ALLOW_HEADERS = (

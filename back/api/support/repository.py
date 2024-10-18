@@ -17,3 +17,8 @@ class Repository():
     @staticmethod
     def create(new_animal):
         Repository.status['data'].append(new_animal)
+    
+    @staticmethod
+    def ddelete(animal_id):
+        Repository.status.pop(animal_id)
+        # Repository.status['data'].append(new_animal)

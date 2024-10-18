@@ -22,7 +22,8 @@ schema_view = get_schema_view(
 # schema_view = get_swagger_view(tittle='Pastebin API')
 
 urlpatterns = [
-    path('animals/', Animal.as_view(), name='animals'),
+    path('animals/<int:id>/', Animal.as_view(), name='animals'),
+    # path('animals/:id', Animal.as_view(), name='animals'),
     # path('swagger/', Swagger.as_view(), name='swagger-docs'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='swagger-ui')
     # path('docs', schema_view, name='docs'),
