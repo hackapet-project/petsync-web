@@ -1,8 +1,9 @@
-from django.urls import path #type: ignore
+from django.urls import path, include #type: ignore
 
 from rest_framework import permissions
+from rest_framework.routers import DefaultRouter
 
-from .views.animal_view import Animal
+from .views.animal_view import Animals
 from .views.swagger import Swagger
 
 from drf_yasg.views import get_schema_view
@@ -19,13 +20,11 @@ schema_view = get_schema_view(
    permission_classes=(permissions.AllowAny,),
 )
 
-# schema_view = get_swagger_view(tittle='Pastebin API')
+# router = DefaultRouter()
+# router.register(r'animals', Animals, basename='animal')
 
 urlpatterns = [
-    path('animals/<int:id>/', Animal.as_view(), name='animals'),
-    # path('animals/:id', Animal.as_view(), name='animals'),
-    # path('swagger/', Swagger.as_view(), name='swagger-docs'),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='swagger-ui')
-    # path('docs', schema_view, name='docs'),
-    # url(r'^$', schema_view)
+    path('animals/', Animals.as_view(), name='animals'),
+    path('animals/<int:id>', Animals.as_view(), name='animals'),
+    path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='swagger-ui')
 ]

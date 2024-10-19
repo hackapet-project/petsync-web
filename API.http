@@ -1,12 +1,28 @@
+GET http://localhost:8000/v1/animals/
+
 ###
-POST http://localhost:8000/v1/animals
+POST http://localhost:8000/v1/animals/
 Content-Type: application/json
 
 {
-  "name": "Bruno",
-  "age": 12,
-  "breed": "Pitbull",
-  "passport": false,
+  "id": 1,
+  "name": "Nero",
+  "age": 3,
+  "breed": "European Cat",
+  "passport": true,
+  "chip": true
+}
+
+###
+PUT http://localhost:8000/v1/animals/2
+Content-Type: application/json
+
+{
+  "id": 2,
+  "name": "Alexander Flemming",
+  "age": 9,
+  "breed": "Chihuahua",
+  "passport": true,
   "chip": true
 }
 
