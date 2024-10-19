@@ -17,7 +17,7 @@ schema_view = get_schema_view(
       contact=openapi.Contact(email="your-email@example.com"),
    ),
    public=True,
-   permission_classes=(permissions.AllowAny,),
+   # permission_classes=(permissions.AllowAny,),
 )
 
 # router = DefaultRouter()
