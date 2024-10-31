@@ -3,12 +3,14 @@ django-cors-headers==4.3.1
 djangorestframework==3.15.1
 
 PyJWT==2.8.0
+pytest==8.3.3
+pytest-django==4.9.0
 psycopg2-binary>=2.8
 
 redgreenunittest
 google-auth==2.31.0
 
 requests
-django-rest-swagger
-drf-yasg
+# django-rest-swagger
+# drf-yasg
 pyyaml

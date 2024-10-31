@@ -12,8 +12,8 @@ init:
 	mkdir front/node_modules
 	docker compose run --rm front npm install
 
-install_back:
-	docker compose run --rm back pip install -r requirements.txt
+back_test:
+	docker compose run --rm back pytest
 
 create_app:
 	docker compose run --rm back ./manage.py startapp ${i}

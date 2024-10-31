@@ -18,6 +18,8 @@ COPY --chown=$USERNAME:$USERNAME requirements.txt $WORKPATH
 
 RUN pip install -r requirements.txt
 
+ENV DJANGO_SETTINGS_MODULE=back.settings
+
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
 ENV PYTHONDONTWRITEBYTECODE 1
