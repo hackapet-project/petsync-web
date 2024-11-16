@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os, sys
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -55,12 +56,23 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Petsync-API',
-    'DESCRIPTION': 'API for all petsync requests',
+    'TITLE': 'My API',
+    'DESCRIPTION': 'This is a sample API documentation using OpenAPI 3.0.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'defaultModelRendering': 'model',
+        'displayRequestDuration': True,
+    },
+    # Load the external schema file
+    'SCHEMA_PATH': os.path.join(BASE_DIR, 'api/support/swagger.yml'),
 }
+
+print(os.path.join(BASE_DIR, 'api/support/swagger.yml'), file=sys.stderr)
 
 CORS_ALLOW_CREDENTIALS = True
 # Application definition
@@ -110,7 +122,6 @@ WSGI_APPLICATION = 'back.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-import os
 
 DATABASES = {
     'default': {
