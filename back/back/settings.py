@@ -62,12 +62,15 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'My API',
     'DESCRIPTION': 'This is a sample API documentation using OpenAPI 3.0.',
     'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
+    'SERVE_INCLUDE_SCHEMA': True,
     'SWAGGER_UI_SETTINGS': {
         'deepLinking': True,
         'defaultModelRendering': 'model',
         'displayRequestDuration': True,
     },
+    'TAGS': [
+        {'name': 'Animals'}
+    ],
     # Load the external schema file
     'SCHEMA_PATH': os.path.join(BASE_DIR, 'api/support/swagger.yml'),
 }
