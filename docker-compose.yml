@@ -19,7 +19,6 @@ services:
     depends_on:
       - postgres
     volumes:
-      # - front_modules:/opt/workdir/node_modules
       - type: bind
         source: ./back
         target: /opt/workdir
@@ -41,6 +40,7 @@ services:
       POSTGRES_DB: mydatabase
       POSTGRES_USER: myuser
       POSTGRES_PASSWORD: mypassword
+      # DJANGO_SETTINGS_MODULE: back.settings
 
   django_scaffolder:
     build:

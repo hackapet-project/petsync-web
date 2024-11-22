@@ -1,27 +1,21 @@
+import os
+import yaml
+import logging
+from django.http import JsonResponse
 from django.conf import settings
+from rest_framework.views import APIView
 
-from rest_framework.decorators import APIView # type: ignore
-from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
-from rest_framework import status
-# from django.http import JsonResponse # type: ignore
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg.views import get_schema_view
-
-from api.support.repository import Repository
-
-import os, yaml, json, sys
-
-class Swagger(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request):
-        # Load the YAML file
-        yaml_path = '/opt/workdir/api/support/swagger.yml'
-        with open(yaml_path, 'r') as yaml_file:
-            yaml_content = yaml.safe_load(yaml_file)
-
-        # Convert the loaded YAML content to an OpenAPI schema
-            openapi_schema = openapi.Swagger(yaml_content)
-        return Response(openapi_schema, status=status.HTTP_200_OK)
+class CustomSchemaView(APIView):
+    def get(self, request, *args, **kwargs):
+        # Path to your swagger.yml file
+        schema_path = '/opt/workdir/api/support/swagger.yml'  # Use the absolute path in Docker
+        try:
+            with open(schema_path, 'r') as file:
+                # Load YAML content and convert it to a dictionary
+                schema_data = yaml.safe_load(file)
+            return JsonResponse(schema_data)
+        except FileNotFoundError:
+            return JsonResponse({'error': 'Schema file not found.'}, status=404)
+        except yaml.YAMLError as e:
+            logging.error(f'Error parsing YAML: {str(e)}')
+            return JsonResponse({'error': 'An internal error has occurred while parsing the schema.'}, status=500)
