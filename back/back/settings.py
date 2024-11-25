@@ -75,8 +75,6 @@ SPECTACULAR_SETTINGS = {
     'SCHEMA_PATH': os.path.join(BASE_DIR, 'api/support/swagger.yml'),
 }
 
-print(os.path.join(BASE_DIR, 'api/support/swagger.yml'), file=sys.stderr)
-
 CORS_ALLOW_CREDENTIALS = True
 # Application definition
 
