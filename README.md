@@ -147,5 +147,5 @@ If you encounter any issues or have questions:
 ---
 
 <div align="center">
-Made with ❤️ by the PetSync Team
+Made with ❤️ by the Hackapet Team
 </div>
