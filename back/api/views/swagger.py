@@ -7,15 +7,14 @@ from rest_framework.views import APIView
 
 class CustomSchemaView(APIView):
     def get(self, request, *args, **kwargs):
-        # Path to your swagger.yml file
-        schema_path = '/opt/workdir/api/support/swagger.yml'  # Use the absolute path in Docker
+        schema_path = '/opt/workdir/api/support/swagger.yml'
+
         try:
             with open(schema_path, 'r') as file:
-                # Load YAML content and convert it to a dictionary
                 schema_data = yaml.safe_load(file)
             return JsonResponse(schema_data)
         except FileNotFoundError:
-            return JsonResponse({'error': 'Schema file not found.'}, status=404)
+            return JsonResponse({ 'error': 'Schema file not found.' }, status=404)
         except yaml.YAMLError as e:
-            logging.error(f'Error parsing YAML: {str(e)}')
-            return JsonResponse({'error': 'An internal error has occurred while parsing the schema.'}, status=500)
+            logging.error(f'Error, failing parsing')
+            return JsonResponse({'error': 'Fatal Server Error'}, status=500)

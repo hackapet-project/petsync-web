@@ -46,7 +46,6 @@ class Animals(View):
     @method_decorator(csrf_exempt)
     def put(self, request, id=None):
         animals = Repository.show()
-        print(id, type(id), file=sys.stderr)
         if not id:
             return JsonResponse({'Error': 'ID is required for updating an animal'}, status=400)
 
