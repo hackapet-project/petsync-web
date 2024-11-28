@@ -124,19 +124,7 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 
 ## 📝 License
 
-This project is licensed under the GNU General Public License v3.0 (GPL-3.0) - see the [LICENSE](LICENSE) file for details. This means:
-
-- ✔️ You can use this software for commercial purposes
-- ✔️ You can modify this software
-- ✔️ You can distribute this software
-- ✔️ You can use this software privately
-- ✔️ You can use warranty
-- ℹ️ You must disclose the source code of your modified versions
-- ℹ️ You must license your modifications under the GPL v3
-- ℹ️ You must document changes made to the code
-- ℹ️ You must state changes made to the code
-
-For more information, please see the full [GPL v3 License text](https://www.gnu.org/licenses/gpl-3.0.txt).
+This project is licensed under the GNU General Public License v3.0 (GPL-3.0) - see the [LICENSE](LICENSE) file for details.
 
 ## 🆘 Support
 
