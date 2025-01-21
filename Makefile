@@ -15,6 +15,10 @@ init:
 back_test:
 	docker compose run --rm back pytest
 
+migrate:
+	docker compose run --rm back ./manage.py makemigrations
+	docker compose run --rm back ./manage.py migrate
+
 create_app:
 	docker compose run --rm back ./manage.py startapp ${i}
 
