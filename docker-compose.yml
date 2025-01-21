@@ -6,10 +6,12 @@ services:
       context: ./front
       target: base
     volumes:
-      - front_modules:/opt/workdir/node_modules
+      - front_modules:/opt/workdir/node_modules:delegated
       - type: bind
         source: ./front
         target: /opt/workdir
+        consistency: delegated
+    user: "${UID:-1000}:${GID:-1000}"
   back:
     ports:
       - 8000:8000
@@ -68,3 +70,4 @@ services:
 volumes:
   front_modules:
   postgres_data:
+

@@ -1,25 +1,28 @@
 FROM python:3.12.3-slim-bookworm AS base
-
 ARG USER_ID=1000
 ARG GROUP_ID=1000
+ENV USERNAME=servo
+ENV WORKPATH=/opt/workdir
 
-ENV USERNAME servo
-ENV WORKPATH /opt/workdir
+# User setup
 RUN addgroup --gid ${GROUP_ID} $USERNAME
 RUN adduser --uid ${USER_ID} --gid ${GROUP_ID} --disabled-password --gecos '' $USERNAME
+
 WORKDIR $WORKPATH
 RUN chown -R ${USER_ID}:${GROUP_ID} .
 
+# Environment setup
 ENV PYTHONPATH "${PYTHONPATH}:${WORKPATH}"
 ENV PATH "/home/${USERNAME}/.local/bin:${PATH}"
+
 USER $USERNAME
 
+# Dependencies
 COPY --chown=$USERNAME:$USERNAME requirements.txt $WORKPATH
-
-# Install Django
 RUN pip install -r requirements.txt
 
-# Copy your application code
-COPY . ${WORKPATH}
+# Application code
+COPY --chown=$USERNAME:$USERNAME . ${WORKPATH}
 
-CMD ["/bin/true"]
+# Changed from /bin/true to make it stay running if needed
+CMD ["tail", "-f", "/dev/null"]

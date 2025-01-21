@@ -1,15 +1,19 @@
-FROM node:18.16-buster-slim AS dev
-
+FROM node:18.16-buster-slim
 ENV WORKPATH=/opt/workdir
 ENV USERNAME=node
 ENV USER_ID=1000
 ENV GROUP_ID=1000
+
+# User setup
 RUN usermod -u ${USER_ID} ${USERNAME}
 RUN usermod -g ${GROUP_ID} ${USERNAME}
 
 WORKDIR ${WORKPATH}
 
+# Install create-vite globally
 RUN npm install -g create-vite@latest
+
 USER ${USERNAME}
 
-CMD ["/bin/true"]
+# Changed from /bin/true to make it stay running if needed
+CMD ["tail", "-f", "/dev/null"]
