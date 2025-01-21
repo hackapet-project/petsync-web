@@ -14,7 +14,7 @@ up:
 down:
 	docker compose down
 
-init:
+init: 
 	rm -rf front/node_modules
 	mkdir front/node_modules
 	docker compose run --rm front npm install
