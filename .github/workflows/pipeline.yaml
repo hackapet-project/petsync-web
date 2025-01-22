@@ -67,16 +67,33 @@ jobs:
             ghcr.io/${{ github.repository }}/back:latest
             ghcr.io/${{ github.repository }}/back:${{ github.sha }}
 
-  deploy:
+ deploy:
     runs-on: ubuntu-latest
     needs:
       - build-and-push-images
+    env:
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.DB_NAME }}
+      POSTGRES_USER: ${{ secrets.DB_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      TRAEFIK_EMAIL: ${{ secrets.TRAEFIK_EMAIL }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    - name: Create env file
+    - name: Generate deployment variables
       run: |
-        echo "GIT_COMMIT_HASH=${{ github.sha }}" >> ./envfile
+        cat << EOF > ./deployment.env
+        GIT_COMMIT_HASH=${{ github.sha }}
+        DB_NAME=${{ secrets.DB_NAME }}
+        DB_USER=${{ secrets.DB_USER }}
+        DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+        POSTGRES_DB=${{ secrets.DB_NAME }}
+        POSTGRES_USER=${{ secrets.DB_USER }}
+        POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}
+        TRAEFIK_EMAIL=${{ secrets.TRAEFIK_EMAIL }}
+        EOF
     - name: Docker Stack Deploy
       uses: cssnr/stack-deploy-action@v1
       with:
@@ -86,4 +103,4 @@ jobs:
         user: root
         port: 7342
         ssh_key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
-        env_file: ./envfile
+        env_file: ./deployment.env

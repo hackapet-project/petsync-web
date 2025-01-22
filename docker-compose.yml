@@ -1,73 +1,80 @@
 services:
+  traefik:
+    image: traefik:v3.1
+    command:
+      - "--providers.docker"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.swarmmode=true"
+      - "--entryPoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=${TRAEFIK_EMAIL}"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+    ports:
+      - mode: host
+        protocol: tcp
+        published: 80
+        target: 80
+      - mode: host
+        protocol: tcp
+        published: 443
+        target: 443
+    volumes:
+      - letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      placement:
+        constraints:
+          - "node.role==manager"
+
   front:
-    ports:
-      - 5173:5173
-    build:
-      context: ./front
-      target: base
-    volumes:
-      - front_modules:/opt/workdir/node_modules:delegated
-      - type: bind
-        source: ./front
-        target: /opt/workdir
-        consistency: delegated
-    user: "${UID:-1000}:${GID:-1000}"
+    image: ghcr.io/${GITHUB_REPOSITORY}/front:${GIT_COMMIT_HASH:-latest}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.front.rule=Host(`refupet.org`)"
+      - "traefik.http.services.front.loadbalancer.server.port=5173"
+      - "traefik.http.routers.front.entrypoints=websecure"
+      - "traefik.http.routers.front.tls.certresolver=myresolver"
+
   back:
-    ports:
-      - 8000:8000
-    build:
-      context: ./back
-      target: base
-    depends_on:
-      - postgres
-    volumes:
-      - type: bind
-        source: ./back
-        target: /opt/workdir
+    image: ghcr.io/${GITHUB_REPOSITORY}/back:${GIT_COMMIT_HASH:-latest}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.back.rule=Host(`api.refupet.org`)"
+      - "traefik.http.services.back.loadbalancer.server.port=8000"
+      - "traefik.http.routers.back.entrypoints=websecure"
+      - "traefik.http.routers.back.tls.certresolver=myresolver"
     environment:
-      - DB_NAME=mydatabase
-      - DB_USER=myuser
-      - DB_PASSWORD=mypassword
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
       - DB_HOST=postgres
 
   postgres:
     image: postgres:16.3-bookworm
-    tty: true
-    stdin_open: true
-    ports:
-      - 5432:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: mydatabase
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      # DJANGO_SETTINGS_MODULE: back.settings
-
-  django_scaffolder:
-    build:
-      context: .
-      dockerfile: Dockerfile.django
-    volumes:
-      - type: bind
-        source: .
-        target: /opt/workdir
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    deploy:
+      placement:
+        constraints:
+          - "node.role==manager"
 
   adminer:
     image: adminer
-    ports:
-      - 10000:8080
-
-  vite_scaffolder:
-    build:
-      context: .
-      dockerfile: Dockerfile.vite
-    volumes:
-      - type: bind
-        source: .
-        target: /opt/workdir
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.adminer.rule=Host(`db.refupet.org`)"
+      - "traefik.http.services.adminer.loadbalancer.server.port=8080"
+      - "traefik.http.routers.adminer.entrypoints=websecure"
+      - "traefik.http.routers.adminer.tls.certresolver=myresolver"
 
 volumes:
-  front_modules:
   postgres_data:
-
+  letsencrypt:
+  front_modules:
