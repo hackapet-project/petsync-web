@@ -26,3 +26,4 @@ ENV PYTHONDONTWRITEBYTECODE 1
 
 # Copy your application code
 COPY . ${WORKPATH}
+

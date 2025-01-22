@@ -33,12 +33,10 @@ services:
     image: ghcr.io/${GITHUB_REPOSITORY}/front:${GIT_COMMIT_HASH:-latest}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.front.loadbalancer.server.port=5173"
+      - "traefik.http.services.front.loadbalancer.server.port=80"
       - "traefik.http.routers.front.rule=Host(`refupet.org`)"
       - "traefik.http.routers.front.entrypoints=websecure"
       - "traefik.http.routers.front.tls.certresolver=myresolver"
-    environment:
-      - HOST=0.0.0.0
     deploy:
       update_config:
         order: start-first
@@ -58,7 +56,6 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_HOST=postgres
-      - BIND_HOST=0.0.0.0
     deploy:
       update_config:
         order: start-first
