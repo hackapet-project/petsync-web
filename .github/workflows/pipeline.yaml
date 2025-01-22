@@ -96,16 +96,16 @@ jobs:
 
       - name: Generate deployment variables
         run: |
-          cat << EOF > ./deployment.env
-          GIT_COMMIT_HASH=${{ github.sha }}
-          DB_NAME=${{ secrets.DB_NAME }}
-          DB_USER=${{ secrets.DB_USER }}
-          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-          POSTGRES_DB=${{ secrets.DB_NAME }}
-          POSTGRES_USER=${{ secrets.DB_USER }}
-          POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}
-          TRAEFIK_EMAIL=${{ secrets.TRAEFIK_EMAIL }}
-          EOF
+          {
+            echo "GIT_COMMIT_HASH='${{ github.sha }}'";
+            echo "DB_NAME='${{ secrets.DB_NAME }}'";
+            echo "DB_USER='${{ secrets.DB_USER }}'";
+            echo "DB_PASSWORD='${{ secrets.DB_PASSWORD }}'";
+            echo "POSTGRES_DB='${{ secrets.DB_NAME }}'";
+            echo "POSTGRES_USER='${{ secrets.DB_USER }}'";
+            echo "POSTGRES_PASSWORD='${{ secrets.DB_PASSWORD }}'";
+            echo "TRAEFIK_EMAIL='${{ secrets.TRAEFIK_EMAIL }}'";
+          } > ./deployment.env
 
       - name: Docker Stack Deploy
         uses: cssnr/stack-deploy-action@v1
@@ -117,4 +117,3 @@ jobs:
           port: 7342
           ssh_key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
           env_file: ./deployment.env
-
