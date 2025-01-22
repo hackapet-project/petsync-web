@@ -1,96 +1,101 @@
 services:
-  traefik:
-    image: traefik:v3.1
-    command:
-      - "--providers.docker"
-      - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.swarmmode=true"
-      - "--entryPoints.websecure.address=:443"
-      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.myresolver.acme.email=${TRAEFIK_EMAIL}"
-      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-    ports:
-      - mode: host
-        protocol: tcp
-        published: 80
-        target: 80
-      - mode: host
-        protocol: tcp
-        published: 443
-        target: 443
-    volumes:
-      - letsencrypt:/letsencrypt
-      - /var/run/docker.sock:/var/run/docker.sock
-    deploy:
-      placement:
-        constraints:
-          - "node.role==manager"
+ traefik:
+   image: traefik:v3.1
+   command:
+     - "--providers.docker"
+     - "--providers.docker.exposedbydefault=false"
+     - "--providers.docker.swarmmode=true"
+     - "--entryPoints.websecure.address=:443"
+     - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+     - "--certificatesresolvers.myresolver.acme.email=${TRAEFIK_EMAIL}"
+     - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+     - "--entrypoints.web.address=:80"
+     - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+     - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+   ports:
+     - mode: host
+       protocol: tcp
+       published: 80
+       target: 80
+     - mode: host
+       protocol: tcp
+       published: 443
+       target: 443
+   volumes:
+     - letsencrypt:/letsencrypt
+     - /var/run/docker.sock:/var/run/docker.sock
+   deploy:
+     placement:
+       constraints:
+         - "node.role==manager"
 
-  front:
-    image: ghcr.io/hackapet-project/petsync-web/front:${GIT_COMMIT_HASH:-latest}
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.front.loadbalancer.server.port=80"
-      - "traefik.http.routers.front.rule=Host(`refupet.org`)"
-      - "traefik.http.routers.front.entrypoints=websecure"
-      - "traefik.http.routers.front.tls.certresolver=myresolver"
-    deploy:
-    update_config:
-      order: start-first
-  depends_on:
-    - postgres
+ front:
+   image: ghcr.io/hackapet-project/petsync-web/front:${GIT_COMMIT_HASH:-latest}
+   labels:
+     - "traefik.enable=true"
+     - "traefik.http.services.front.loadbalancer.server.port=80"
+     - "traefik.http.routers.front.rule=Host(`refupet.org`)"
+     - "traefik.http.routers.front.entrypoints=websecure"
+     - "traefik.http.routers.front.tls.certresolver=myresolver"
+   deploy:
+     placement:
+       constraints:
+         - "node.role==manager"
 
-back:
-    image: ghcr.io/hackapet-project/petsync-web/back:${GIT_COMMIT_HASH:-latest}
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.back.loadbalancer.server.port=8000"
-      - "traefik.http.routers.back.rule=Host(`api.refupet.org`)"
-      - "traefik.http.routers.back.entrypoints=websecure"
-      - "traefik.http.routers.back.tls.certresolver=myresolver"
-    environment:
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_HOST=postgres
-    deploy:
-      update_config:
-        order: start-first
-    depends_on:
-      - postgres
+ back:
+   image: ghcr.io/hackapet-project/petsync-web/back:${GIT_COMMIT_HASH:-latest}
+   labels:
+     - "traefik.enable=true"
+     - "traefik.http.services.back.loadbalancer.server.port=8000"
+     - "traefik.http.routers.back.rule=Host(`api.refupet.org`)"
+     - "traefik.http.routers.back.entrypoints=websecure"
+     - "traefik.http.routers.back.tls.certresolver=myresolver"
+   environment:
+     - DB_NAME=${DB_NAME}
+     - DB_USER=${DB_USER}
+     - DB_PASSWORD=${DB_PASSWORD}
+     - DB_HOST=postgres
+   secrets:
+     - db-password
+   deploy:
+     placement:
+       constraints:
+         - "node.role==manager"
 
-  postgres:
-    image: postgres:16.3-bookworm
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    healthcheck:
-      test: ["CMD", "pg_isready"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    deploy:
-      placement:
-        constraints:
-          - "node.role==manager"
+ postgres:
+   image: postgres:16.3-bookworm
+   user: postgres
+   volumes:
+     - postgres_data:/var/lib/postgresql/data
+   environment:
+     - POSTGRES_DB=${POSTGRES_DB}
+     - POSTGRES_USER=${POSTGRES_USER}
+     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+   secrets:
+     - db-password
+   healthcheck:
+     test: ["CMD", "pg_isready"]
+     interval: 10s
+     timeout: 5s
+     retries: 5
+   deploy:
+     placement:
+       constraints:
+         - "node.role==manager"
 
-  adminer:
-    image: adminer
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.adminer.loadbalancer.server.port=8080"
-      - "traefik.http.routers.adminer.rule=Host(`db.refupet.org`)"
-      - "traefik.http.routers.adminer.entrypoints=websecure"
-      - "traefik.http.routers.adminer.tls.certresolver=myresolver"
-    depends_on:
-      - postgres
+ adminer:
+   image: adminer
+   labels:
+     - "traefik.enable=true"
+     - "traefik.http.services.adminer.loadbalancer.server.port=8080"
+     - "traefik.http.routers.adminer.rule=Host(`db.refupet.org`)"
+     - "traefik.http.routers.adminer.entrypoints=websecure"
+     - "traefik.http.routers.adminer.tls.certresolver=myresolver"
 
 volumes:
-  postgres_data:
-  letsencrypt:
+ postgres_data:
+ letsencrypt:
+
+secrets:
+ db-password:
+   external: true
