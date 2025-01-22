@@ -30,7 +30,7 @@ services:
           - "node.role==manager"
 
   front:
-    image: ghcr.io/${GITHUB_REPOSITORY}/front:${GIT_COMMIT_HASH:-latest}
+    image: ghcr.io/${REPOSITORY}/front:${GIT_COMMIT_HASH:-latest}
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.front.loadbalancer.server.port=80"
@@ -44,7 +44,7 @@ services:
       - postgres
 
   back:
-    image: ghcr.io/${GITHUB_REPOSITORY}/back:${GIT_COMMIT_HASH:-latest}
+    image: ghcr.io/${REPOSITORY}/back:${GIT_COMMIT_HASH:-latest}
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.back.loadbalancer.server.port=8000"
