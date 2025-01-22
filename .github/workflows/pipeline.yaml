@@ -11,115 +11,119 @@ permissions:
 jobs:
   run-tests:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+  steps:
+    - uses: actions/checkout@v4
 
-      # For frontend tests
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-      
-      - name: Install frontend dependencies
-        working-directory: ./front
-        run: npm install
+    # For frontend tests
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
 
-      - name: Run frontend tests
-        working-directory: ./front
-        run: npm test
+    - name: Install frontend dependencies
+      working-directory: ./front
+      run: npm install
+
+    - name: Run frontend tests
+      working-directory: ./front
+      run: npm test
 
       # For backend tests
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
 
-      - name: Install backend dependencies
-        working-directory: ./back
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+    - name: Install backend dependencies
+      working-directory: ./back
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
-      - name: Run backend tests
-        working-directory: ./back
-        run: pytest
+    - name: Run backend tests
+      working-directory: ./back
+      run: pytest
 
-  build-and-push-images:
-    runs-on: ubuntu-latest
-    if: always()
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      build-and-push-images:
+        runs-on: ubuntu-latest
+      if: always()
+      steps:
+        - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Log in to the Container registry
-        uses: docker/login-action@v3
-        with:
-          registry: https://ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Log in to the Container registry
+      uses: docker/login-action@v3
+      with:
+        registry: https://ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Build and push frontend
-      - name: Build and push frontend Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: ./front
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository }}/front:latest
-            ghcr.io/${{ github.repository }}/front:${{ github.sha }}
+    - name: Set IMAGE_NAME
+      run: |
+        echo "IMAGE_NAME=ghcr.io/hackapet-project/petsync-web" >> $GITHUB_ENV
 
-      # Build and push backend
-      - name: Build and push backend Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: ./back
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository }}/back:latest
-            ghcr.io/${{ github.repository }}/back:${{ github.sha }}
+    - name: Build and push frontend Docker image
+      uses: docker/build-push-action@v6
+      with:
+        context: ./front
+      file: ./front/Dockerfile
+      push: true
+      tags: |
+        ${{ env.IMAGE_NAME }}/front:latest
+        ${{ env.IMAGE_NAME }}/front:${{ github.sha }}
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs:
-      - build-and-push-images
-    env:
-      DB_NAME: ${{ secrets.DB_NAME }}
+          # Build and push backend
+    - name: Build and push backend Docker image
+      uses: docker/build-push-action@v6
+      with:
+        context: ./back
+        push: true
+        tags: |
+          ${{ env.IMAGE_NAME }}/back:latest
+          ${{ env.IMAGE_NAME }}/back:${{ github.sha }} 
+
+        deploy:
+          runs-on: ubuntu-latest
+      needs:
+        - build-and-push-images
+      env:
+        DB_NAME: ${{ secrets.DB_NAME }}
       DB_USER: ${{ secrets.DB_USER }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       POSTGRES_DB: ${{ secrets.DB_NAME }}
       POSTGRES_USER: ${{ secrets.DB_USER }}
       POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
       TRAEFIK_EMAIL: ${{ secrets.TRAEFIK_EMAIL }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
 
-      - name: Generate deployment variables
-        run: |
-          {
-            echo "GIT_COMMIT_HASH='${{ github.sha }}'";
-            echo "DB_NAME='${{ secrets.DB_NAME }}'";
-            echo "DB_USER='${{ secrets.DB_USER }}'";
-            echo "DB_PASSWORD='${{ secrets.DB_PASSWORD }}'";
-            echo "POSTGRES_DB='${{ secrets.DB_NAME }}'";
-            echo "POSTGRES_USER='${{ secrets.DB_USER }}'";
-            echo "POSTGRES_PASSWORD='${{ secrets.DB_PASSWORD }}'";
-            echo "TRAEFIK_EMAIL='${{ secrets.TRAEFIK_EMAIL }}'";
-          } > ./deployment.env
+    - name: Generate deployment variables
+      run: |
+        {
+          echo "GIT_COMMIT_HASH='${{ github.sha }}'";
+          echo "DB_NAME='${{ secrets.DB_NAME }}'";
+          echo "DB_USER='${{ secrets.DB_USER }}'";
+          echo "DB_PASSWORD='${{ secrets.DB_PASSWORD }}'";
+          echo "POSTGRES_DB='${{ secrets.DB_NAME }}'";
+          echo "POSTGRES_USER='${{ secrets.DB_USER }}'";
+          echo "POSTGRES_PASSWORD='${{ secrets.DB_PASSWORD }}'";
+          echo "TRAEFIK_EMAIL='${{ secrets.TRAEFIK_EMAIL }}'";
+        } > ./deployment.env
 
-      - name: Docker Stack Deploy
-        uses: cssnr/stack-deploy-action@v1
-        with:
-          name: refupet
-          file: docker-compose.yml
-          host: refupet.org
-          user: nade
-          port: 7342
-          ssh_key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
-          env_file: ./deployment.env
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Docker Stack Deploy
+      uses: cssnr/stack-deploy-action@v1
+      with:
+        name: refupet
+        file: docker-compose.yml
+        host: refupet.org
+        user: nade
+        port: 7342
+        ssh_key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+        env_file: ./deployment.env
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
