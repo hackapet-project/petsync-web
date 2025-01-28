@@ -100,6 +100,6 @@ jobs:
           file: docker-compose.yml
           host: refupet.org
           user: nade
-          port: 7342
+          port: ${{ secrets.SSH_PORT }}
           ssh_key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
           env_file: ./deployment.env
