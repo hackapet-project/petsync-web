@@ -2,10 +2,12 @@ services:
   traefik:
     image: traefik:v3.1
     command:
-      - "--providers.docker"
+      - "--providers.docker=true"
+      - "--providers.docker.swarm=true"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.swarm=true"
       - "--entryPoints.websecure.address=:443"
+      - "--entryPoints.postgres.address=:5432"
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.myresolver.acme.email=${TRAEFIK_EMAIL}"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
@@ -21,6 +23,10 @@ services:
         protocol: tcp
         published: 443
         target: 443
+      - mode: host
+        protocol: tcp
+        published: 5432
+        target: 5432
     volumes:
       - letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock
@@ -37,6 +43,8 @@ services:
     image: ghcr.io/hackapet-project/petsync-web/front:${GIT_COMMIT_HASH:-latest}
     networks:
       - traefik-public
+    depends_on:
+      - back
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.front.loadbalancer.server.port=80"
@@ -54,6 +62,8 @@ services:
     image: ghcr.io/hackapet-project/petsync-web/back:${GIT_COMMIT_HASH:-latest}
     networks:
       - traefik-public
+    depends_on:
+      - postgres
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -84,6 +94,11 @@ services:
     user: postgres
     networks:
       - traefik-public
+    ports:
+      - mode: host
+        protocol: tcp
+        published: 5432
+        target: 5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
@@ -105,6 +120,8 @@ services:
           - "node.role==manager"
     labels:
       - "traefik.enable=true"
+      - "traefik.tcp.routers.postgres.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.postgres.entrypoints=postgres"
       - "traefik.tcp.services.postgres.loadbalancer.server.port=5432"
 
   adminer:
