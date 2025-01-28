@@ -54,9 +54,6 @@ services:
     image: ghcr.io/hackapet-project/petsync-web/back:${GIT_COMMIT_HASH:-latest}
     networks:
       - traefik-public
-    depends_on:
-      postgres:
-        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
