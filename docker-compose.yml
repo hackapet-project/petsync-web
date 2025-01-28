@@ -25,9 +25,13 @@ services:
      - letsencrypt:/letsencrypt
      - /var/run/docker.sock:/var/run/docker.sock
    deploy:
-     placement:
-       constraints:
-         - "node.role==manager"
+    mode: replicated
+    replicas: 1
+    placement:
+      constraints:
+        - "node.role==manager"
+  networks:
+      - traefik-public
 
  front:
    image: ghcr.io/hackapet-project/petsync-web/front:${GIT_COMMIT_HASH:-latest}
@@ -37,13 +41,20 @@ services:
      - "traefik.http.routers.front.rule=Host(`refupet.org`)"
      - "traefik.http.routers.front.entrypoints=websecure"
      - "traefik.http.routers.front.tls.certresolver=myresolver"
-   deploy:
-     placement:
-       constraints:
-         - "node.role==manager"
+    
+  networks:
+      - traefik-public
 
  back:
    image: ghcr.io/hackapet-project/petsync-web/back:${GIT_COMMIT_HASH:-latest}
+   depends_on:
+      postgres:
+        condition: service_healthy
+   healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
    labels:
      - "traefik.enable=true"
      - "traefik.http.services.back.loadbalancer.server.port=8000"
@@ -58,9 +69,13 @@ services:
    secrets:
      - db-password
    deploy:
-     placement:
-       constraints:
-         - "node.role==manager"
+    mode: replicated
+    replicas: 1
+    placement:
+      constraints:
+        - "node.role==manager"
+  networks:
+      - traefik-public
 
  postgres:
    image: postgres:16.3-bookworm
@@ -79,9 +94,14 @@ services:
      timeout: 5s
      retries: 5
    deploy:
-     placement:
-       constraints:
-         - "node.role==manager"
+    mode: replicated
+    replicas: 1
+    placement:
+      constraints:
+        - "node.role==manager"
+  labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.services.postgres.loadbalancer.server.port=5432"
 
  adminer:
    image: adminer
@@ -91,10 +111,24 @@ services:
      - "traefik.http.routers.adminer.rule=Host(`db.refupet.org`)"
      - "traefik.http.routers.adminer.entrypoints=websecure"
      - "traefik.http.routers.adminer.tls.certresolver=myresolver"
+  deploy:
+    mode: replicated
+    replicas: 1
+    placement:
+      constraints:
+        - "node.role==manager"
+
+  networks:
+      - traefik-public
 
 volumes:
  postgres_data:
  letsencrypt:
+
+networks:
+  traefik-public:
+    driver: overlay
+    attachable: true
 
 secrets:
  db-password:
