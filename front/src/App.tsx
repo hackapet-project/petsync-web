@@ -8,7 +8,7 @@ function App() {
 
   return (
     <>
-      <h1>Refupet is part of Hackapet</h1>
+    <h1>Refupet is part of <a href="https://hackapet.org">hackapet</a>.org  </h1>
     </>
   )
 }
