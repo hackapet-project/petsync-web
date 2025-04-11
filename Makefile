@@ -1,32 +1,26 @@
-.PHONY: build up down init
+.PHONY: build up down init back_test create_app scaffold_django scaffold_vite
 
 init:
-	rm -rf front/node_modules
-	mkdir front/node_modules
-	docker compose run --rm --user node front npm install
+	docker compose -f docker-compose.dev.yml build front
+	docker compose -f docker-compose.dev.yml run --rm front npm install
 
 build:
-	docker compose build
+	docker compose -f docker-compose.dev.yml build
 
 up:
-	docker compose up --no-attach postgres
+	docker compose -f docker-compose.dev.yml up
 
 down:
-	docker compose down
-
-init: 
-	rm -rf front/node_modules
-	mkdir front/node_modules
-	docker compose run --rm front npm install
+	docker compose -f docker-compose.dev.yml down
 
 back_test:
-	docker compose run --rm back pytest
+	docker compose -f docker-compose.dev.yml run --rm back pytest
 
 create_app:
-	docker compose run --rm back ./manage.py startapp ${i}
+	docker compose -f docker-compose.dev.yml run --rm back ./manage.py startapp ${i}
 
 scaffold_django:
-	docker compose run --rm django_scaffolder django-admin startproject back
+	docker compose -f docker-compose.dev.yml run --rm django_scaffolder django-admin startproject back
 
 scaffold_vite:
-	docker compose run --rm vite_scaffolder npm create vite@4.4.0 ${i}
+	docker compose -f docker-compose.dev.yml run --rm vite_scaffolder npm create vite@4.4.0 ${i}
