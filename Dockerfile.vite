@@ -1,19 +1,27 @@
-FROM node:18.16-buster-slim
-ENV WORKPATH=/opt/workdir
+FROM node:20-slim
+
+ENV WORKPATH=/opt/app
 ENV USERNAME=node
 ENV USER_ID=1000
 ENV GROUP_ID=1000
 
-# User setup
-RUN usermod -u ${USER_ID} ${USERNAME}
-RUN usermod -g ${GROUP_ID} ${USERNAME}
+RUN groupadd --gid ${GROUP_ID} ${USERNAME} || groupmod -g ${GROUP_ID} ${USERNAME}
+RUN useradd --uid ${USER_ID} --gid ${GROUP_ID} --shell /bin/bash --create-home ${USERNAME} || usermod -u ${USER_ID} -g ${GROUP_ID} ${USERNAME}
 
 WORKDIR ${WORKPATH}
 
-# Install create-vite globally
-RUN npm install -g create-vite@latest
+COPY ./package.json ./package-lock.json* ./yarn.lock* ./pnpm-lock.yaml* ./
+
+RUN npm install
+
+COPY ./ ./
+
+RUN npm run build
+
+RUN npm install -g serve
 
 USER ${USERNAME}
+RUN chown -R ${USERNAME}:${USERNAME} ${WORKPATH}
 
-# Changed from /bin/true to make it stay running if needed
-CMD ["tail", "-f", "/dev/null"]
+EXPOSE 80
+CMD ["serve", "-s", "dist", "-l", "80"]
