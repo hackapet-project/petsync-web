@@ -2,27 +2,23 @@ FROM python:3.12.3-slim-bookworm AS base
 ARG USER_ID=1000
 ARG GROUP_ID=1000
 ENV USERNAME=servo
-ENV WORKPATH=/opt/workdir
+ENV WORKPATH=/opt/app
 
-# User setup
 RUN addgroup --gid ${GROUP_ID} $USERNAME
 RUN adduser --uid ${USER_ID} --gid ${GROUP_ID} --disabled-password --gecos '' $USERNAME
 
 WORKDIR $WORKPATH
-RUN chown -R ${USER_ID}:${GROUP_ID} .
 
-# Environment setup
 ENV PYTHONPATH "${PYTHONPATH}:${WORKPATH}"
 ENV PATH "/home/${USERNAME}/.local/bin:${PATH}"
 
+COPY ./requirements.txt $WORKPATH/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . ${WORKPATH}
+
 USER $USERNAME
+RUN chown -R ${USERNAME}:${USERNAME} ${WORKPATH}
 
-# Dependencies
-COPY --chown=$USERNAME:$USERNAME requirements.txt $WORKPATH
-RUN pip install -r requirements.txt
-
-# Application code
-COPY --chown=$USERNAME:$USERNAME . ${WORKPATH}
-
-# Changed from /bin/true to make it stay running if needed
-CMD ["tail", "-f", "/dev/null"]
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
