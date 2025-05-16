@@ -1,10 +1,9 @@
-name: pipeline
+name: deploy-pipeline
 on:
   push:
     branches:
       - "main"
-permissions:
-  packages: write
+
 jobs:
   run-tests:
     runs-on: ubuntu-latest
@@ -33,13 +32,13 @@ jobs:
         working-directory: ./back
         run: pytest
 
-  build-and-push-images:
+  build-images:
     runs-on: ubuntu-latest
-    if: always()
+    needs: run-tests
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Log in to the Container registry
+      - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: https://ghcr.io
@@ -47,8 +46,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Set IMAGE_NAME
         run: |
-          echo "IMAGE_NAME=ghcr.io/hackapet-project/petsync-web" >> $GITHUB_ENV
-      - name: Build and push frontend Docker image
+          echo "IMAGE_NAME=ghcr.io/${{ github.repository }}" >> $GITHUB_ENV
+      - name: Build frontend Docker image
         uses: docker/build-push-action@v6
         with:
           context: ./front
@@ -57,7 +56,7 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAME }}/front:latest
             ${{ env.IMAGE_NAME }}/front:${{ github.sha }}
-      - name: Build and push backend Docker image
+      - name: Build backend Docker image
         uses: docker/build-push-action@v6
         with:
           context: ./back
@@ -65,41 +64,3 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAME }}/back:latest
             ${{ env.IMAGE_NAME }}/back:${{ github.sha }}
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs:
-      - build-and-push-images
-    env:
-      DB_NAME: ${{ secrets.DB_NAME }}
-      DB_USER: ${{ secrets.DB_USER }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      POSTGRES_DB: ${{ secrets.DB_NAME }}
-      POSTGRES_USER: ${{ secrets.DB_USER }}
-      POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      TRAEFIK_EMAIL: ${{ secrets.TRAEFIK_EMAIL }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Generate deployment variables
-        run: |
-          {
-            echo "GIT_COMMIT_HASH='${{ github.sha }}'";
-            echo "DB_NAME='${{ secrets.DB_NAME }}'";
-            echo "DB_USER='${{ secrets.DB_USER }}'";
-            echo "DB_PASSWORD='${{ secrets.DB_PASSWORD }}'";
-            echo "POSTGRES_DB='${{ secrets.DB_NAME }}'";
-            echo "POSTGRES_USER='${{ secrets.DB_USER }}'";
-            echo "POSTGRES_PASSWORD='${{ secrets.DB_PASSWORD }}'";
-            echo "TRAEFIK_EMAIL='${{ secrets.TRAEFIK_EMAIL }}'";
-          } > ./deployment.env
-      - name: Docker Stack Deploy
-        uses: cssnr/stack-deploy-action@v1
-        with:
-          name: refupet
-          file: docker-compose.yml
-          host: refupet.org
-          user: nade
-          port: ${{ secrets.SSH_PORT }}
-          ssh_key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
-          env_file: ./deployment.env
