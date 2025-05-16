@@ -34,7 +34,6 @@ jobs:
 
   build-images:
     runs-on: ubuntu-latest
-    needs: run-tests
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
