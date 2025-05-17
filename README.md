@@ -9,7 +9,7 @@
 
 </div>
 
-Welcome to PetSync Web! This is the web-based version of PetSync (temporary name), a comprehensive platform for animal shelter management. Built with React, Django, and Docker, this application provides a robust solution for managing animal shelter operations.
+Welcome to RefuPet! This is the web-based part of the project, a comprehensive platform for animal shelter management. Built with React, Django, and Docker, this application provides a robust solution for managing animal shelter operations.
 
 # This is a WiP, and it's not even in alpha, so don't expect a lot.
 
