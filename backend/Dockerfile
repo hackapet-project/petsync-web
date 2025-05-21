@@ -36,7 +36,9 @@ RUN pip install --no-cache /wheels/* --user
 # Copy project files
 COPY . .
 
-# ✅ Ensure staticfiles/ is writable by non-root user
+
+
+# Ensure staticfiles/ is writable
 RUN mkdir -p /home/app/web/staticfiles && chown -R app:app /home/app/web/staticfiles
 
 # Copy entrypoint

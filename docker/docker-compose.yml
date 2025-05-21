@@ -21,6 +21,9 @@ services:
       - "coolify.service=web"
       - "coolify.port=8000"
     restart: unless-stopped
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+
 
   frontend:
     build:
@@ -52,3 +55,4 @@ services:
 
 volumes:
   postgres_data:
+  static_volume:
