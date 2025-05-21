@@ -59,8 +59,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'refupet_project.wsgi.application'
 
-# DATABASE (default to SQLite, but ready for Postgres override)
-
+# DATABASE
 DATABASE_URL = os.environ.get("DATABASE_URL")
 if not DATABASE_URL:
     raise Exception("DATABASE_URL environment variable is not set")
@@ -83,9 +82,13 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# STATIC FILES
+# STATIC FILES — important for collectstatic
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# In production, also tell Django where to find static files
+if not DEBUG:
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 # SECURITY HEADERS
 if os.environ.get("DJANGO_ENV") == "production":
@@ -106,11 +109,10 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 REFERRER_POLICY = 'same-origin'
 
-
 # AUTO FIELD
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# settings.py
+# LOGGING
 LOGGING = {
     'version': 1,
     'handlers': {
