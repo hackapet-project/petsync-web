@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     command: /home/app/web/entrypoint.sh
     ports:
-      - "8000:8000"
+      - "8080:8000"
     environment:
       - PYTHONUNBUFFERED=1
       - DJANGO_SETTINGS_MODULE=refupet_project.settings
