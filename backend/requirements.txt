@@ -1,0 +1,6 @@
+Django~=4.2 # Or your preferred Django version
+gunicorn~=21.2
+psycopg2-binary~=2.9 # For PostgreSQL
+python-dotenv~=1.0 # For .env file handling
+dj-database-url~=2.1 # For parsing DATABASE_URL
+

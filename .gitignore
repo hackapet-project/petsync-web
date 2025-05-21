@@ -1,7 +1,151 @@
-node_modules
-db.sqlite3
+# -------------------------------------------------------------------
+# 💡 Python General
+# -------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.so
+*.class
+*.egg
+*.egg-info/
+.installed.cfg
+*.manifest
+*.spec
+.Python
+.python-version
+
+# -------------------------------------------------------------------
+# 💡 Build / Distribution
+# -------------------------------------------------------------------
+build/
+dist/
+downloads/
+develop-eggs/
+sdist/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+
+# -------------------------------------------------------------------
+# 🧪 Testing / Coverage / CI
+# -------------------------------------------------------------------
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.pytest_cache/
+.hypothesis/
+htmlcov/
+
+# -------------------------------------------------------------------
+# 📦 Virtual Environments
+# -------------------------------------------------------------------
 .env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
-.vite
+# -------------------------------------------------------------------
+# 🧠 PyInstaller / Cython / Debug
+# -------------------------------------------------------------------
+*.manifest
+*.spec
+cython_debug/
 
-.idea
+# -------------------------------------------------------------------
+# 📄 Logs and Local Config
+# -------------------------------------------------------------------
+*.log
+pip-log.txt
+pip-delete-this-directory.txt
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# -------------------------------------------------------------------
+# 🌐 Django
+# -------------------------------------------------------------------
+media/
+static_collected/      # Collected static files
+staticfiles/           # Alternate collectstatic folder
+celerybeat-schedule
+celerybeat.pid
+
+# -------------------------------------------------------------------
+# 📚 Documentation
+# -------------------------------------------------------------------
+docs/_build/
+site/
+
+# -------------------------------------------------------------------
+# 🔬 Type Checking & IDEs
+# -------------------------------------------------------------------
+.mypy_cache/
+.dmypy.json
+.pyre/
+.pytype/
+.ropeproject/
+.spyderproject/
+.spyproject/
+
+# -------------------------------------------------------------------
+# 💻 Jupyter / IPython
+# -------------------------------------------------------------------
+.ipynb_checkpoints/
+profile_default/
+ipython_config.py
+
+# -------------------------------------------------------------------
+# 📦 PEP 582
+# -------------------------------------------------------------------
+__pypackages__/
+
+# -------------------------------------------------------------------
+# 🔧 VS Code
+# -------------------------------------------------------------------
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# -------------------------------------------------------------------
+# 🚀 Node / Frontend (React/Vite)
+# -------------------------------------------------------------------
+node_modules/
+.npm-cache/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.vite/
+dist/
+build/
+.eslintcache
+
+# Env files (handled via Docker)
+.env.*
+!.env.template
+
+# -------------------------------------------------------------------
+# 🐳 Docker
+# -------------------------------------------------------------------
+docker-compose.override.yml
+docker/db_data/
+__docker_cache__/
+
+# -------------------------------------------------------------------
+# 🖥️ OS-specific files
+# -------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
