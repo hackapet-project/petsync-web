@@ -17,6 +17,9 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    labels:
+      - "coolify.service=web"
+      - "coolify.port=8000"
     restart: unless-stopped
 
   frontend:
