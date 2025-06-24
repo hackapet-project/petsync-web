@@ -23,7 +23,7 @@
 ### 🏗️ Architecture
 
 - **🌐 Frontend**: React 19 + Vite + TypeScript
-- **⚙️ Backend**: Django 4+ + REST Framework + PostgreSQL  
+- **⚙️ Backend**: Django 4+ + REST Framework + PostgreSQL
 - **🐳 Infrastructure**: Docker + Docker Compose
 - **🚀 Deployment**: Coolify-compatible with automated CI/CD
 
@@ -38,7 +38,7 @@
 - **Static file handling** and optimized asset serving
 - **Health checks** and proper logging
 
-### 👨‍💻 **Developer Experience**  
+### 👨‍💻 **Developer Experience**
 - **One-command setup** - `make setup && make dev`
 - **Hot reload development** with instant feedback
 - **Automated code quality** - pre-commit hooks, linting, formatting
@@ -113,7 +113,7 @@ make dev-bg      # Start in background
 make stop        # Stop all containers
 make logs        # View application logs
 
-# Code Quality  
+# Code Quality
 make format      # Format all code (Black + Prettier)
 make lint        # Run all linters
 make test        # Run all tests
@@ -160,7 +160,7 @@ refupet-web/
 
 ### For Users
 - **API Documentation** - Available at `/api/docs/` when running
-- **Admin Interface** - Django admin at `/admin/` 
+- **Admin Interface** - Django admin at `/admin/`
 
 ---
 
@@ -175,7 +175,7 @@ make test
 # Frontend only
 make test-frontend
 
-# Backend only  
+# Backend only
 make test-backend
 ```
 
@@ -236,19 +236,19 @@ DATABASE_URL=postgresql://user:password@host:port/database
 
 ### Core Team
 
-**🏆 Lead Developer & Architect**  
+**🏆 Lead Developer & Architect**
 **Diego Rejón** - Project leadership, API development, database design
 
-**🔧 Infrastructure & DevOps**  
+**🔧 Infrastructure & DevOps**
 **Ignacio Delgado** - Docker infrastructure, CI/CD, deployment
 
-**🎨 Frontend Development**  
+**🎨 Frontend Development**
 **nadecc** - React development, UI/UX, frontend architecture
 
-**📚 Documentation & Project Management**  
+**📚 Documentation & Project Management**
 **Nacho Loyola** - Documentation, contributor guidelines
 
-**🤖 Developer Experience**  
+**🤖 Developer Experience**
 **Claude** - Automation, tooling, security enhancements
 
 ---
@@ -281,7 +281,7 @@ This ensures that all modifications and usage in networks (e.g., as a web app) r
 ### Getting Help
 
 - 🐛 **Bug Reports**: [GitHub Issues](https://github.com/hackapet-project/refupet-web/issues)
-- 💡 **Feature Requests**: [GitHub Discussions](https://github.com/hackapet-project/refupet-web/discussions)  
+- 💡 **Feature Requests**: [GitHub Discussions](https://github.com/hackapet-project/refupet-web/discussions)
 - 📧 **General Questions**: [dev@hackapet.org](mailto:dev@hackapet.org)
 - 📖 **Documentation**: Check [docs/](docs/) directory
 
@@ -310,6 +310,6 @@ make dev
 
 **Made with ❤️ by the RefuPet Team**
 
-[⭐ Star us on GitHub](https://github.com/hackapet-project/refupet-web) • [🐦 Follow updates](https://twitter.com/hackapet) • [🌍 Visit hackapet.org](https://hackapet.org)
+[⭐ Star us on GitHub](https://github.com/hackapet-project/refupet-web • [🌍 Visit hackapet.org](https://hackapet.org)
 
 </div>
