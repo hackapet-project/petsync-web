@@ -15,7 +15,7 @@ python manage.py collectstatic --noinput
 
 echo "🚀 Starting Gunicorn..."
 exec gunicorn refupet_project.wsgi:application \
-  --bind 0.0.0.0:8000 \
+  --bind 0.0.0.0:8001 \
   --workers 3 \
   --threads 2 \
   --timeout 120 \
