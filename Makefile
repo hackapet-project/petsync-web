@@ -14,13 +14,21 @@ setup: ## Initial project setup (copy .env, install dependencies)
 	@echo "✅ Setup complete! Run 'make dev' to start development"
 
 # Development
+check-docker: ## Check if Docker is running
+	@docker info > /dev/null 2>&1 || (echo "❌ Docker is not running! Please start Docker Desktop and try again." && exit 1)
+	@echo "✅ Docker is running"
+
 dev: ## Start full development environment
 	@echo "🚀 Starting RefuPet development environment..."
-	docker compose -f docker/docker-compose.yml up --build
+	@if [ ! -f .env ]; then echo "❌ .env file not found! Run 'make setup' first."; exit 1; fi
+	@$(MAKE) check-docker
+	docker compose -f docker/docker-compose.yml --env-file .env up --build
 
 dev-bg: ## Start development environment in background
 	@echo "🚀 Starting RefuPet development environment in background..."
-	docker compose -f docker/docker-compose.yml up --build -d
+	@if [ ! -f .env ]; then echo "❌ .env file not found! Run 'make setup' first."; exit 1; fi
+	@$(MAKE) check-docker
+	docker compose -f docker/docker-compose.yml --env-file .env up --build -d
 
 dev-frontend: ## Start only frontend development server
 	@echo "🚀 Starting frontend development server..."
@@ -28,47 +36,47 @@ dev-frontend: ## Start only frontend development server
 
 stop: ## Stop all development containers
 	@echo "🛑 Stopping development environment..."
-	docker compose -f docker/docker-compose.yml down
+	docker compose -f docker/docker-compose.yml --env-file .env down
 
 # Database Management
 migrate: ## Run Django database migrations
 	@echo "🔧 Running database migrations..."
-	docker compose -f docker/docker-compose.yml exec backend python manage.py migrate
+	docker compose -f docker/docker-compose.yml --env-file .env exec backend python manage.py migrate
 
 makemigrations: ## Create new Django migrations
 	@echo "🔧 Creating new migrations..."
-	docker compose -f docker/docker-compose.yml exec backend python manage.py makemigrations
+	docker compose -f docker/docker-compose.yml --env-file .env exec backend python manage.py makemigrations
 
 seed: ## Seed database with development data
 	@echo "🌱 Seeding database with development data..."
-	docker compose -f docker/docker-compose.yml exec backend python manage.py setup_dev_data
+	docker compose -f docker/docker-compose.yml --env-file .env exec backend python manage.py setup_dev_data
 
 superuser: ## Create Django superuser
 	@echo "👤 Creating Django superuser..."
-	docker compose -f docker/docker-compose.yml exec backend python manage.py createsuperuser
+	docker compose -f docker/docker-compose.yml --env-file .env exec backend python manage.py createsuperuser
 
 # Code Quality
 lint: ## Run linting for both frontend and backend
 	@echo "🔍 Running linters..."
 	cd frontend && npm run lint
-	docker compose -f docker/docker-compose.yml exec backend flake8 .
+	docker compose -f docker/docker-compose.yml --env-file .env exec backend flake8 .
 
 format: ## Format code (Prettier + Black)
 	@echo "✨ Formatting code..."
 	cd frontend && npm run format
-	docker compose -f docker/docker-compose.yml exec backend black .
-	docker compose -f docker/docker-compose.yml exec backend isort .
+	docker compose -f docker/docker-compose.yml --env-file .env exec backend black .
+	docker compose -f docker/docker-compose.yml --env-file .env exec backend isort .
 
 type-check: ## Run type checking
 	@echo "🔍 Running type checks..."
 	cd frontend && npm run type-check || echo "No type checking configured yet"
-	docker compose -f docker/docker-compose.yml exec backend mypy . || echo "No mypy configured yet"
+	docker compose -f docker/docker-compose.yml --env-file .env exec backend mypy . || echo "No mypy configured yet"
 
 # Testing
 test: ## Run all tests
 	@echo "🧪 Running tests..."
 	cd frontend && npm run test || echo "No tests configured yet"
-	docker compose -f docker/docker-compose.yml exec backend python manage.py test
+	docker compose -f docker/docker-compose.yml --env-file .env exec backend python manage.py test
 
 test-frontend: ## Run frontend tests only
 	@echo "🧪 Running frontend tests..."
@@ -76,41 +84,41 @@ test-frontend: ## Run frontend tests only
 
 test-backend: ## Run backend tests only
 	@echo "🧪 Running backend tests..."
-	docker compose -f docker/docker-compose.yml exec backend python manage.py test
+	docker compose -f docker/docker-compose.yml --env-file .env exec backend python manage.py test
 
 # Build
 build: ## Build production images
 	@echo "🏗️ Building production images..."
-	docker compose -f docker/docker-compose.yml build
+	docker compose -f docker/docker-compose.yml --env-file .env build
 
 # Utility
 logs: ## Show development logs
-	docker compose -f docker/docker-compose.yml logs -f
+	docker compose -f docker/docker-compose.yml --env-file .env logs -f
 
 logs-backend: ## Show backend logs only
-	docker compose -f docker/docker-compose.yml logs -f backend
+	docker compose -f docker/docker-compose.yml --env-file .env logs -f backend
 
 logs-frontend: ## Show frontend logs only
-	docker compose -f docker/docker-compose.yml logs -f frontend
+	docker compose -f docker/docker-compose.yml --env-file .env logs -f frontend
 
 shell: ## Open Django shell
 	@echo "🐚 Opening Django shell..."
-	docker compose -f docker/docker-compose.yml exec backend python manage.py shell
+	docker compose -f docker/docker-compose.yml --env-file .env exec backend python manage.py shell
 
 shell-db: ## Open database shell
 	@echo "🐚 Opening database shell..."
-	docker compose -f docker/docker-compose.yml exec db psql -U $(shell grep POSTGRES_USER .env | cut -d '=' -f2) -d $(shell grep POSTGRES_DB .env | cut -d '=' -f2)
+	docker compose -f docker/docker-compose.yml --env-file .env exec db psql -U $(shell grep POSTGRES_USER .env | cut -d '=' -f2) -d $(shell grep POSTGRES_DB .env | cut -d '=' -f2)
 
 # Cleanup
 clean: ## Clean up containers, volumes, and build artifacts
 	@echo "🧹 Cleaning up..."
-	docker compose -f docker/docker-compose.yml down -v --remove-orphans
+	docker compose -f docker/docker-compose.yml --env-file .env down -v --remove-orphans
 	docker system prune -f
 	cd frontend && rm -rf node_modules/.cache dist
 
 reset: ## Reset everything (clean + remove volumes)
 	@echo "🔄 Resetting everything..."
-	docker compose -f docker/docker-compose.yml down -v --remove-orphans
+	docker compose -f docker/docker-compose.yml --env-file .env down -v --remove-orphans
 	docker volume rm $(shell docker volume ls -q | grep refupet) 2>/dev/null || true
 	cd frontend && rm -rf node_modules dist
 	@echo "✅ Reset complete! Run 'make setup' to reinitialize"
