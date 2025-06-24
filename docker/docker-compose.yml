@@ -15,7 +15,7 @@ services:
       - DJANGO_FORCE_HTTPS=${DJANGO_FORCE_HTTPS}
       - DJANGO_ENV=${DJANGO_ENV}
     ports:
-      - "8000:8000"
+      - "8001:8000"
     depends_on:
       db:
         condition: service_healthy
