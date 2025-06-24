@@ -119,9 +119,9 @@ clean: ## Clean up containers, volumes, and build artifacts
 reset: ## Reset everything (clean + remove volumes)
 	@echo "🔄 Resetting everything..."
 	docker compose -f docker/docker-compose.yml --env-file .env down -v --remove-orphans
-	docker volume rm $(shell docker volume ls -q | grep refupet) 2>/dev/null || true
+	docker volume rm $(shell docker volume ls -q | grep docker) 2>/dev/null || true
 	cd frontend && rm -rf node_modules dist
-	@echo "✅ Reset complete! Run 'make setup' to reinitialize"
+	@echo "✅ Reset complete! Run 'make dev' to start fresh"
 
 # Install pre-commit hooks
 install-hooks: ## Install pre-commit hooks
