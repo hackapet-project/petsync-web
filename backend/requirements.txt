@@ -3,6 +3,7 @@ gunicorn~=21.2
 psycopg2-binary~=2.9 # For PostgreSQL
 python-dotenv~=1.0 # For .env file handling
 dj-database-url~=2.1 # For parsing DATABASE_URL
+whitenoise~=6.6.0 # For serving static files
 
 # Development Dependencies
 black~=23.12.1 # Code formatter
