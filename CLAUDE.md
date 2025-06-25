@@ -147,11 +147,11 @@ The project uses `.env` files for configuration:
 ## Important Notes
 
 ### Development Access Points
-- **Backend**: http://localhost:8000
-- **Frontend**: http://localhost:5173  
-- **Admin Panel**: http://localhost:8000/admin
-- **API Docs**: http://localhost:8000/api/docs/
-- **API Schema**: http://localhost:8000/api/schema/
+- **Backend**: http://localhost:8002
+- **Frontend**: http://localhost:5174  
+- **Admin Panel**: http://localhost:8002/admin
+- **API Docs**: http://localhost:8002/api/docs/
+- **API Schema**: http://localhost:8002/api/schema/
 
 ### Security
 - **Never commit secrets** - use `.env.example` as template
